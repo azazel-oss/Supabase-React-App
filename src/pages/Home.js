@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import DrinkCard from "../components/DrinkCard";
 import supabase from "../config/supabaseClient";
 const Home = () => {
-  console.log(supabase);
   const [drinks, setDrinks] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   useEffect(() => {
