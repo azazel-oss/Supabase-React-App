@@ -4,12 +4,20 @@ import supabase from "../config/supabaseClient";
 const Home = () => {
   const [drinks, setDrinks] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+
+  const handleDelete = (id) => {
+    setDrinks((prevState) => {
+      return prevState.filter((drink) => drink.id !== id);
+    });
+  };
   useEffect(() => {
     async function fetchDrinks() {
-      let { data: drinks, error } = await supabase.from("drinks").select("*");
+      let { data: drinks, error } = await supabase
+        .from("drinks")
+        .select("*")
+        .order("rating", { ascending: false });
       if (error) {
         setFetchError(error);
-        console.log(error);
       } else {
         setDrinks(drinks);
         setFetchError(null);
@@ -26,7 +34,7 @@ const Home = () => {
           {/* order by button */}
           <div className="drink-grid">
             {drinks.map((drink) => (
-              <DrinkCard key={drink.id} drink={drink} />
+              <DrinkCard key={drink.id} drink={drink} onDelete={handleDelete} />
             ))}
           </div>
         </div>

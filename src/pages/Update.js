@@ -10,6 +10,33 @@ const Update = () => {
   const [method, setMethod] = useState("");
   const [rating, setRating] = useState(0);
 
+  const [formError, setFormError] = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!title || !method || !rating) {
+      setFormError("Please fill all the fields correctly");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("drinks")
+      .update({ title, method, rating })
+      .eq("id", drinksId);
+
+    console.log(data);
+
+    if (error) {
+      setFormError("Please fill the fields correctly");
+    }
+
+    if (data) {
+      console.log(data);
+      setFormError(null);
+      navigate("/");
+    }
+  }
+
   useEffect(() => {
     const fetchDrink = async () => {
       const { data, error } = await supabase
@@ -25,14 +52,13 @@ const Update = () => {
         setTitle(data.title);
         setMethod(data.method);
         setRating(data.rating);
-        console.log(data);
       }
     };
     fetchDrink();
   }, [drinksId, navigate]);
   return (
     <div className="page update">
-      <form>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="title">Title:</label>
         <input
           type="text"
@@ -58,6 +84,7 @@ const Update = () => {
         />
         <button>Update drink</button>
       </form>
+      {formError && <p className="error">{formError}</p>}
     </div>
   );
 };
